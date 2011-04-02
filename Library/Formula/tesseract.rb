@@ -3,7 +3,7 @@ require 'download_strategy'
 
 class GzipOnlyDownloadStrategy <CurlDownloadStrategy
   def stage
-    FileUtils.mv @tarball_path, File.basename(@url)
+    mv @tarball_path, File.basename(@url)
     safe_system '/usr/bin/gunzip', '-f', File.basename(@url)
   end
 end
@@ -30,7 +30,9 @@ class Tesseract < Formula
     system "./configure", "--prefix=#{prefix}", "--disable-debug", "--disable-dependency-tracking"
     system "make install"
     
-    TesseractEnglishData.new.brew { mv "eng.traineddata", "#{prefix}/share/tessdata/" }
+    # By default, tesseract will attempt to use the eng.traineddata data set. 
+    # The training data isn't needed to install Tesseract 3, but it is needed to have it actually run.
+    TesseractEnglishData.new.brew { mv "eng.traineddata", "#{share}/tessdata/" }
   end
 
   def caveats; <<-EOF.undent
